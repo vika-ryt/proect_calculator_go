@@ -2,8 +2,47 @@ package calculation_test
 
 import (
 	"testing"
+     import (
+	"io"
+	"net/http"
+	"testing"
 
-	"github.com/pashapdev/calc_go/pkg/calculation"
+	"net/http/httptest"
+)
+
+func TestRequestHandlerSuccessCase(t *testing.T) {
+	expected := "Hello John"
+	req := httptest.NewRequest(http.MethodGet, "/greet?name=John", nil)
+	w := httptest.NewRecorder()
+	RequestHandler(w, req)
+	res := w.Result()
+	defer res.Body.Close()
+	data, err := io.ReadAll(res.Body)
+	if err != nil {
+		t.Errorf("Error: %v", err)
+	}
+
+	if string(data) != expected {
+		t.Errorf("Expected Hello John but got %v", string(data))
+	}
+
+	if res.StatusCode != http.StatusOK {
+		t.Errorf("wrong status code")
+	}
+}
+
+func TestRequestHandlerBadRequestCase(t *testing.T) {
+	req := httptest.NewRequest(http.MethodGet, "/greet", nil)
+	w := httptest.NewRecorder()
+	RequestHandler(w, req)
+	res := w.Result()
+	defer res.Body.Close()
+
+	if res.StatusCode != http.StatusBadRequest {
+		t.Errorf("wrong status code")
+	}
+}
+	"github.com/vika-ryt/proect_calculator_go/pkg/calculation"
 )
 
 func TestCalc(t *testing.T) {
@@ -52,20 +91,24 @@ func TestCalc(t *testing.T) {
 		expectedErr error
 	}{
 		{
-			name:       "simple",
-			expression: "1+1*",
+			name:           "simple",
+			expression:     "1+1",
+			expectedResult: 2,
 		},
 		{
-			name:       "priority",
-			expression: "2+2**2",
+			name:           "priority",
+			expression:     "(2+2)*2",
+			expectedResult: 8,
 		},
 		{
-			name:       "priority",
-			expression: "((2+2-*(2",
+			name:           "priority",
+			expression:     "2+2*2",
+			expectedResult: 6,
 		},
 		{
-			name:       "/",
-			expression: "",
+			name:           "/",
+			expression:     "1/2",
+			expectedResult: 0.5,
 		},
 	}
 
