@@ -29,6 +29,6 @@
     "error": "Expression is not valid"
 }, 422
 Для запуска проекта:
-go run ./cmd/proect_calculator_go/main.go
+go run ./cmd/main.go
 
 
