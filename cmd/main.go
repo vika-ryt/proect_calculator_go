@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/pashapdev/calc_go/internal/application"
+	"github.com/vika-ryt/proect_calculator_go/internal/application"
 )
 
 func main() {

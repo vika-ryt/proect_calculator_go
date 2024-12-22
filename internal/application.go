@@ -10,7 +10,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/pashapdev/calc_go/pkg/calculation"
+	"github.com/vika-ryt/proect_calculator_go/pkg/calculation"
 )
 
 type Config struct {
@@ -77,18 +77,22 @@ func CalcHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-
+    
 	result, err := calculation.Calc(request.Expression)
 	if err != nil {
 		if errors.Is(err, calculation.ErrInvalidExpression) {
 			fmt.Fprintf(w, "err: %s", err.Error())
+			w.WriteHeader(http.StatusBadRequest)
 		} else {
 			fmt.Fprintf(w, "unknown err")
+			w.WriteHeader(http.StatusInternalServerError)
 		}
 
 	} else {
 		fmt.Fprintf(w, "result: %f", result)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 	}
+	w.WriteHeader(http.StatusOK)
 }
 
 func (a *Application) RunServer() error {
